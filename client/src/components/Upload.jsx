@@ -3,104 +3,84 @@ import axios from "axios";
 
 const Upload = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [modal, setModal] = useState(false);
-  const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const placeholders = ["Skills", "Experience", "Education"];
-  const [skills, setSkills] = useState("");
-  const [experience, setExperience] = useState("");
-  const [education, setEducation] = useState("");
+  const [jobDes, setJobDes] = useState("");
+  const candidates = [
+    {
+      name: 'Yash',
+      resume: 'yash.pdf'
+    },
+    {
+      name: 'Ravi Pandey',
+      resume: 'ravi.pdf'
+    }
+  ];
+  
 
   const upload = () => {
+    // Display the content of the textarea in an alert
+    alert("Job Description: " + jobDes);
+
     const formData = new FormData();
     for (let i = 0; i < selectedFiles.length; i++) {
       formData.append("selectedFiles", selectedFiles[i]);
     }
+    formData.append("jobDes", jobDes); // Add job description to form data
     axios
       .post("http://localhost:3001/upload", formData)
       .then((res) => {
-        setModal(true);
+        console.log(res);
       })
       .catch((err) => console.log(err));
   };
 
-  const handleNext = () => {
-    setPlaceholderIndex((prevIndex) => (prevIndex + 1) % placeholders.length);
-    setEducation("");
-    setSkills("");
-    setExperience("");
-    setPlaceholderIndex((prevIndex) => {
-      const newIndex = (prevIndex + 0) % placeholders.length;
-      if (newIndex === 2) {
-        setModal(false);
-      }
-      return newIndex;
-    });
-  };
-
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="max-w-md mx-auto p-4 rounded-lg">
-        <h5 className="text-lg font-semibold mb-4">Upload PDF:</h5>
-        <input
-          type="file"
-          className="mb-4"
-          multiple
-          onChange={(e) => setSelectedFiles(e.target.files)}
-        />
-        <button
-          className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 focus:outline-none focus:bg-orange-600"
-          onClick={upload}
-        >
-          Upload
-        </button>
-      </div>
-      {modal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white w-[50rem] rounded-lg shadow-lg p-4">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold">Upload Successful</h2>
-              <button
-                className="text-gray-600 hover:text-gray-800"
-                onClick={() => setModal(false)}
-              >
-                Close
-              </button>
-            </div>
-            <p>{placeholders[placeholderIndex]}</p>
-            <div className="flex justify-center">
-              <input
-                type="text"
-                placeholder={placeholders[placeholderIndex]}
-                value={
-                  placeholders[placeholderIndex] === "Skills"
-                    ? skills
-                    : placeholders[placeholderIndex] === "Experience"
-                    ? experience
-                    : education
-                }
-                onChange={(e) => {
-                  if (placeholders[placeholderIndex] === "Skills") {
-                    setSkills(e.target.value);
-                  } else if (
-                    placeholders[placeholderIndex] === "Experience"
-                  ) {
-                    setExperience(e.target.value);
-                  } else {
-                    setEducation(e.target.value);
-                  }
-                }}
-                className="rounded-full w-[25rem] py-2 px-4 border border-gray-300 focus:outline-none"
-              />
-              <button
-                className="ml-4 bg-orange-500 text-white rounded-full py-2 px-4 hover:bg-orange-600 focus:outline-none"
-                onClick={handleNext}
-              >
-                Next
-              </button>
-            </div>
-          </div>
+    <div className="flex flex-col lg:flex-row justify-center items-center h-screen">
+      <div className="lg:mr-5 mb-8 lg:mb-0">
+        <div className="max-w-lg mx-auto p-8 bg-white rounded-lg shadow-lg border flex flex-col items-center w-full lg:w-[25rem]">
+          <h5 className="text-lg font-semibold mb-4">Upload PDF:</h5>
+          <input
+            type="file"
+            className="mb-4"
+            multiple
+            onChange={(e) => setSelectedFiles(e.target.files)}
+          />
+          <textarea
+            className="border border-gray-300 rounded px-4 py-2 w-full h-40 mb-4"
+            placeholder="Job Description"
+            value={jobDes}
+            onChange={(e) => setJobDes(e.target.value)}
+          ></textarea>
+          <button
+            className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 focus:outline-none focus:bg-purple-600"
+            onClick={upload}
+          >
+            Upload
+          </button>
         </div>
-      )}
+      </div>
+      <div className="lg:ml-5">
+        <div className="mt-8 bg-white p-6 rounded-xl">
+          <p className="mb-4 font-bold">Short list resume's</p>
+          <table className="w-full lg:w-[35rem] border-collapse border border-gray-300">
+            <thead>
+              <tr>
+                <th className="border border-gray-300 px-4 py-2">No.</th>
+                <th className="border border-gray-300 px-4 py-2">Name</th>
+                <th className="border border-gray-300 px-4 py-2">Resume</th>
+              </tr>
+            </thead>
+            <tbody>
+              {candidates.map((candidate, index) => (
+                <tr key={index}>
+                  <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
+                  <td className="border border-gray-300 px-4 py-2">{candidate.name}</td>
+                  <td className="border border-gray-300 px-4 py-2"><a href="" className="hover:text-purple-500">{candidate.resume}</a></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };

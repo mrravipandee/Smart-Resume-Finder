@@ -3,7 +3,7 @@ import Upload from './Upload';
 
 const Recruiter = () => {
   return (
-    <div className="max-w-md mx-auto p-4 bg-gray-100">
+    <div className="max-w-md mx-auto p-4">
       
       <Upload />
     </div>
